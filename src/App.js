@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
+import RepoItem from './components/RepoItem'
 import './App.css';
 
-function App() {
+import API from './api';
+
+const App = () => {
+  const [repos, setRepos] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const result = await API.get(`users/zanderthuo/repos`)
+      console.log(result.data)
+      setRepos(result.data)
+      setIsLoading(false)
+    }
+
+    fetchItems()
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <RepoItem isLoading={isLoading} repos={repos} />
     </div>
   );
 }
