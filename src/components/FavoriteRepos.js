@@ -15,7 +15,7 @@ const FavoriteRepos = () => {
         <thead>
           <tr>
             {titles.map((title, key) => (
-              <th key={key}>{title}</key>
+              <th key={key}>{title}</th>
             ))}
           </tr>
         </thead>

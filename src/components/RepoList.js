@@ -1,30 +1,32 @@
 import React from 'react';
 import { Container, Card, Col, Button, Row} from 'react-bootstrap'
+import { Redirect, Link } from 'react-router-dom';
+';
 
-import { Redirect } from 'react-router-dom';
-
-import API from '../api'
+import axios from 'axios'
 
 import '../styles/Repositories.css'
+
+
+// window.localStorage.setItem("repos", JSON.stringify(repos));
+
 
 class RepoList extends React.Component {
   constructor(props) {
     super(props)
-  
+
     this.state = {
       repos:[],
       isLoading: false,
-      redirect: false
     }
-    this.ViewRepo = this.ViewRepo.bind(this)
   }
-  
+
 
   componentDidMount = () => {
-      API.get(`user/repos?page=1&per_page=10`)
+      axios.get(`https://api.github.com/repositories`)
         .then(res => {
           const repos = res.data;
-          window.localStorage.setItem("repos", JSON.stringify(repos));
+          console.log(repos)
           this.setState({ repos });
         })
         .catch(error => {
@@ -32,49 +34,36 @@ class RepoList extends React.Component {
         });
   }
 
-  ViewRepo(e){
-    e.preventDefault();
-    API.get(`user/repos?page=1&per_page=10`)
-      .then(res => {
-        this.setState({ redirect: true, isLoading: false });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
+
   render(){
     const { redirect } = this.state;
 
      if (redirect) {
-       return <Redirect to='/repoDisplay'/>;
+       return <Redirect to='/singleRepo'/>;
      }
     return (
-        <div>
-            <Container>
-                <Row>
-                  {this.state.repos.sort((a, b) => {
-                      if (a.stargazers_count > b.stargazers_count) return 1
-                      else if (a.stargazers_count < b.stargazers_count) return -1
-                      return 0
-                    }).map((repos) => (
-                    <Col sm>
-                        <Card className="RepoCard" style={{ width: '18rem' }}>
-                            <>
-                              <Card.Header as="h5">
-                                  <Card.Title key={repos.id}>{repos.name}</Card.Title>
-                              </Card.Header>
-                              <Card.Body>
-                                  <Card.Text>
-                                      {repos.watchers}
-                                  </Card.Text>
-                                  <Button variant="primary" onClick={this.ViewRepo}>View Repo</Button>
-                              </Card.Body>
-                            </>
-                      </Card>
-                    </Col>
-                    ))}
-                </Row>
-            </Container>
+        <div className="container">
+            <div className="Row">
+                {this.state.repos.map((repos) => (
+                    <Card className="RepoCard" style={{ width: '18rem' }}>
+                        <>
+                          <Card.Header className="cardHeader" as="h2">
+                              <Card.Title key={repos.id}>{repos.name}</Card.Title>
+                          </Card.Header>
+                          <Card.Body className="cardBody">
+                              <Card.Text className="cardText">
+                                  {repos.description}
+                              </Card.Text>
+                          </Card.Body>
+                          <Card.Footer className="cardFooter">
+                            <Button>
+                              <Link to={`/singleRepo/${repos.id}`}>View Repo</Link>
+                            </Button>
+                          </Card.Footer>
+                        </>
+                  </Card>
+                  ))}
+            </div>
         </div>
     )
   }
