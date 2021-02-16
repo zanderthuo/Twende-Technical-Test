@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Card, Col, Button, Row} from 'react-bootstrap'
 import { Redirect, Link } from 'react-router-dom';
-';
 
 import axios from 'axios'
 
